@@ -1,0 +1,9 @@
+SpeechRecognition
+pydub
+openai==0.28
+PyQt5
+pyinstaller
+ffmpeg
+watchdog
+urllib3==1.26.15
+pillow
