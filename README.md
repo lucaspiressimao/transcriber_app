@@ -1,92 +1,131 @@
-Transcriber App
+# Transcriber App
 
-Descrição
+## Description
 
-O Transcriber App é um aplicativo desenvolvido em Python que permite transcrever áudios para texto utilizando inteligência artificial. Ele suporta arquivos de áudio em formatos comuns, como MP3, WAV e OGG, e realiza a transcrição utilizando a API da OpenAI, com um refinamento baseado no modelo Whisper. O aplicativo é simples de usar, com uma interface gráfica intuitiva construída com a biblioteca Tkinter.
+The Transcriber App is a Python application that transcribes audio to text using artificial intelligence. It supports common audio formats like MP3, WAV, and OGG, and performs transcription using the OpenAI API with a refinement based on the Whisper model. The app is easy to use, featuring an intuitive graphical interface built with the Tkinter library.
 
-Funcionalidades
+## Features
 
-Carregamento de Arquivos: Suporte para arquivos de áudio nos formatos MP3, WAV e OGG.
-Transcrição de Áudio: Transcreve áudio para texto usando a API da OpenAI.
-Interface Gráfica: Interface amigável e fácil de usar, desenvolvida com Tkinter.
-Estrutura do Projeto
+- **File Loading**: Supports audio files in MP3, WAV, and OGG formats.
+- **Audio Transcription**: Transcribes audio to text using the OpenAI API.
+- **Graphical Interface**: User-friendly GUI developed with Tkinter.
 
+## Project Structure
+
+```plaintext
 transcriber_app/
+├── transcriber.py         # Main script with transcription logic
+├── ui.py                  # Script for the graphical interface (UI)
+├── requirements.txt       # Project dependencies
+├── Makefile               # Makefile for task automation
+└── README.md              # This README file with project information
+```
 
-transcriber.py: Script principal com a lógica de transcrição
-ui.py: Script para a interface gráfica (UI)
-requirements.txt: Lista de dependências do projeto
-Makefile: Arquivo Makefile para automação de tarefas
-README.md: Este arquivo README com informações sobre o projeto
-Como Funciona
+## How It Works
 
-Seleção de Arquivo: O usuário seleciona um arquivo de áudio no seu computador utilizando o botão "Selecionar Arquivo".
-Transcrição: O usuário clica em "Transcrever", e o aplicativo processa o áudio, enviando-o para a API da OpenAI, onde é transcrito para texto.
-Exibição do Texto: O texto transcrito é exibido na interface gráfica, onde pode ser copiado ou salvo conforme necessário.
-Requisitos
+1. **File Selection**: Users select an audio file on their computer using the "Select File" button.
+2. **Transcription**: Click "Transcribe" to process the audio, which is sent to the OpenAI API and transcribed to text.
+3. **Text Display**: The transcribed text is displayed in the GUI for copying or saving as needed.
 
-Python 3.x: Certifique-se de que o Python 3 esteja instalado.
-API Key da OpenAI: O aplicativo usa a API da OpenAI para transcrição. Você precisará de uma chave de API válida.
-Como Configurar o Ambiente
+## Requirements
 
-Para facilitar o processo de configuração do ambiente e compilação do aplicativo para diferentes sistemas operacionais, foi criado um Makefile. Siga os passos abaixo:
+- **Python 3.x**: Make sure Python 3 is installed.
+- **OpenAI API Key**: The app uses the OpenAI API for transcription. You’ll need a valid API key.
 
-Criar o ambiente virtual e instalar dependências:
-No terminal, dentro da pasta do projeto, execute:
+## Setting Up the Environment
 
-csharp
-Copy code
+To streamline the setup and compilation process for different operating systems, a Makefile has been created. Follow the steps below:
+
+### 1. Creating the Virtual Environment and Installing Dependencies
+In the terminal, within the project folder, execute:
+
+```bash
 make init
-Este comando cria um ambiente virtual chamado venv e instala todas as dependências listadas no arquivo requirements.txt.
-Compilar para Windows:
-Se você estiver em um sistema Windows, use o comando:
+```
 
-go
-Copy code
-make compile-windows
-Isso gerará um executável para Windows na pasta dist.
-Compilar para Linux:
-Se você estiver em um sistema Linux, use o comando:
+This command creates a virtual environment named `venv` and installs all dependencies listed in `requirements.txt`.
 
-go
-Copy code
-make compile-linux
-Isso gerará um executável para Linux na pasta dist.
-Compilar para macOS:
-Se você estiver em um sistema macOS, use o comando:
+### 2. Compiling for Windows
+If you’re on a Windows system, use:
 
-go
-Copy code
-make compile-mac
-Isso gerará um executável para macOS na pasta dist.
-Limpar arquivos temporários:
-Para remover o ambiente virtual e os arquivos temporários gerados durante a compilação, use:
+```bash
+make build-windows
+```
 
-go
-Copy code
+This will create a Windows executable in the `dist` folder.
+
+### 3. Compiling for Linux
+For Linux, use:
+
+```bash
+make build-linux
+```
+
+This generates a Linux executable in the `dist` folder.
+
+### 4. Compiling for macOS
+For macOS, use:
+
+```bash
+make build-mac
+```
+
+This will create a macOS executable in the `dist` folder.
+
+### 5. Cleaning Temporary Files
+To remove the virtual environment and temporary files created during compilation, use:
+
+```bash
 make clean
-Tutorial de Compilação e Uso
+```
 
-Compilação
-Windows: Execute make compile-windows em um sistema Windows.
-Linux: Execute make compile-linux em um sistema Linux.
-macOS: Execute make compile-mac em um sistema macOS.
-Cada comando gerará um executável na pasta dist, correspondente ao sistema operacional utilizado.
+## Cross-Compilation Setup for macOS to Windows
+If you want to compile the application for Windows on macOS, use Wine to simulate a Windows environment. Below are the prerequisites and setup steps:
 
-Uso do Aplicativo
-Abra o aplicativo: Clique no executável gerado (transcriber-windows.exe, transcriber-linux, transcriber-mac) para abrir o aplicativo.
-Selecione o arquivo de áudio: Use o botão "Selecionar Arquivo" para escolher um arquivo de áudio que deseja transcrever.
-Transcreva o áudio: Após selecionar o arquivo, clique em "Transcrever" para iniciar a transcrição. O texto transcrito será exibido na caixa de texto.
-Copie ou salve o texto: O texto transcrito pode ser copiado da caixa de texto para ser utilizado conforme necessário.
-Considerações
-
-Compilação Cruzada: O PyInstaller deve ser executado no sistema operacional correspondente ao destino. Ou seja, para gerar um executável para Windows, você deve executar o make compile-windows em um sistema Windows. O mesmo vale para Linux e macOS.
-API Key: Substitua "SUA_CHAVE_API" no arquivo transcriber.py pela sua chave de API da OpenAI antes de executar o aplicativo.
-Licença
-
-Este projeto está licenciado sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
-
-brew install --cask xquartz   # Requerido para o Wine
+### Install Wine on macOS
+```bash
+brew install --cask xquartz   # Required by Wine
 brew install --cask wine-stable
-curl -o python-installer.exe https://www.python.org/ftp/python/3.9.9/python-3.9.9-amd64.exe
-WINEPREFIX=~/.wine wine python-installer.exe
+```
+
+### Install Python in Wine
+
+1. Download the Python installer:
+   ```bash
+   curl -o python-installer.exe https://www.python.org/ftp/python/3.9.9/python-3.9.9-amd64.exe
+   ```
+
+2. Install Python in the Wine environment:
+   ```bash
+   WINEPREFIX=~/.wine wine python-installer.exe
+   ```
+
+### Windows Build Setup
+
+Run the following command in the project root to compile the executable for Windows:
+
+```bash
+make build-windows
+```
+
+This will produce a `Digitador.exe` executable in the `bin/windows` directory.
+
+## Usage Guide
+
+### Run the Application
+Open the generated executable (`Digitador.exe` on Windows, `transcriber-linux` on Linux, or `transcriber-mac` on macOS).
+
+### Select an Audio File
+Use the "Select File" button to choose an audio file for transcription.
+
+### Start Transcription
+Click "Transcribe" to start processing the audio file. The transcribed text will appear in the text box.
+
+### Copy or Save the Text
+The transcribed text can be copied or saved as needed.
+
+## Notes
+- **Cross-Compilation**: PyInstaller must be run on the operating system for which you’re generating the executable. For example, use `make compile-windows` on a Windows system to produce a Windows executable. However, you can compile for Windows on macOS using Wine with the instructions above.
+
+## License
+This project is licensed under the MIT License. See the `LICENSE` file for more details.

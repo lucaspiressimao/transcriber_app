@@ -1,28 +1,28 @@
-# Nome do ambiente virtual
+# Virtual environment name
 VENV = venv
 
-# Dependências do projeto
+# Project dependencies
 REQUIREMENTS = requirements.txt
 
-# Nome do arquivo principal para compilar
-MAIN_SCRIPT = ui.py
+# Main script to compile
+MAIN_SCRIPT = src/ui.py
 
-# Nome do executável gerado
+# Generated executable name
 EXE_NAME = "Digitador"
 EXE_NAME_WIN = "Digitador.exe"
 
-# Caminhos de ícones
+# Icon paths
 ICON_PATH = img/icon.png
 ICON_SET = img/icon.iconset
 ICON_MAC = img/icon.icns
 ICON_WIN = img/icon.ico
 
-# Caminhos binários para ffmpeg
+# Binary paths for ffmpeg
 FFMPEG_PATH = libs
 FFMPEG_PATH_MAC = $(FFMPEG_PATH)/mac
 FFMPEG_PATH_WINDOWS = $(FFMPEG_PATH)/windows
 
-# Parâmetros do PyInstaller
+# PyInstaller parameters
 PYINSTALLER_FLAGS = --onefile --windowed
 PYINSTALLER_FLAGS_WIN = --onefile --noconsole
 PYINSTALLER_LIBS_MAC = --add-binary "$(FFMPEG_PATH_MAC)/ffmpeg:." --add-binary "$(FFMPEG_PATH_MAC)/ffprobe:."
@@ -33,66 +33,63 @@ BUILD_ICON_WIN = --icon=$(ICON_WIN)
 BUILD_NAME = --name $(EXE_NAME)
 BUILD_WIN_NAME = --name $(EXE_NAME_WIN)
 
-# Caminho das bibliotecas de Qt no ambiente PyQt5
-QT_PATH = "C:\\users\\lucaspiressimao\\AppData\\Local\\Programs\\Python\\Python39\\lib\\site-packages\\PyQt5\\Qt5\\bin"
-
-# Caminhos de saída
+# Output paths
 DIST_DIR = dist/*
 BIN_DIR_WINDOWS = bin/windows/*
 BIN_DIR_MAC = bin/mac/*
 
+WINE_PYTHON_PATH := $(shell find ~/.wine/drive_c/users -name "python.exe" | head -n 1)
+WINE_PYTHONINSTALLER_PATH := $(shell find ~/.wine/drive_c/users -name "pyinstaller.exe" | head -n 1)
+
 .PHONY: init venv install install-wine-deps run-local compile-windows compile-linux clear-mac-build generate-mac-icons compile-mac move_compiled_mac build-mac clean build-windows
 
-# Inicializa o ambiente virtual e instala as dependências
+# Initialize virtual environment and install dependencies
 init: venv install
 
-# Cria o ambiente virtual
+# Create virtual environment
 venv:
 	@if [ ! -d "$(VENV)" ]; then \
 		python3 -m venv $(VENV); \
 	fi
 
-# Instala as dependências dentro do ambiente virtual
+# Install dependencies in virtual environment
 install: venv
 	$(VENV)/bin/pip install -r $(REQUIREMENTS)
 	$(VENV)/bin/pip install pyinstaller watchdog
 
-# Instala as dependências no ambiente Wine
+# Install dependencies in Wine environment
 install-wine-deps:
 	WINEARCH=win64 WINEPREFIX=~/.wine winecfg
-	WINEPREFIX=~/.wine wine "/Users/lucaspiressimao/.wine/drive_c/users/lucaspiressimao/AppData/Local/Programs/Python/Python39/python.exe" -m ensurepip
-	WINEPREFIX=~/.wine wine "/Users/lucaspiressimao/.wine/drive_c/users/lucaspiressimao/AppData/Local/Programs/Python/Python39/python.exe" -m pip install --upgrade pip
-	WINEPREFIX=~/.wine wine "/Users/lucaspiressimao/.wine/drive_c/users/lucaspiressimao/AppData/Local/Programs/Python/Python39/python.exe" -m pip install --upgrade pyinstaller
-	WINEPREFIX=~/.wine wine "/Users/lucaspiressimao/.wine/drive_c/users/lucaspiressimao/AppData/Local/Programs/Python/Python39/python.exe" -m pip install -r $(REQUIREMENTS)
+	WINEPREFIX=~/.wine wine "$(WINE_PYTHON_PATH)" -m ensurepip
+	WINEPREFIX=~/.wine wine "$(WINE_PYTHON_PATH)" -m pip install --upgrade pip
+	WINEPREFIX=~/.wine wine "$(WINE_PYTHON_PATH)" -m pip install --upgrade pyinstaller
+	WINEPREFIX=~/.wine wine "$(WINE_PYTHON_PATH)" -m pip install -r $(REQUIREMENTS)
 
-# Executa o projeto localmente com monitoramento de alterações
+# Run project locally with file change monitoring
 run-local: clean install
 	$(VENV)/bin/watchmedo auto-restart --patterns="*.py" --recursive -- $(VENV)/bin/python $(MAIN_SCRIPT)
 
-# Compila para Windows usando Wine no macOS, com coletor total de dependências
+# Compile for Windows using Wine on macOS, adding --collect-all to include full PyQt5
 compile-windows: install-wine-deps
-	WINEPREFIX=~/.wine wine "/Users/lucaspiressimao/.wine/drive_c/users/lucaspiressimao/AppData/Local/Programs/Python/Python39/Scripts/pyinstaller.exe" \
-	$(PYINSTALLER_FLAGS_WIN) $(BUILD_ICON_WIN) $(PYINSTALLER_LIBS_WINDOWS) $(BUILD_WIN_NAME) \
-	--collect-all PyQt5 --collect-submodules PyQt5 --copy-metadata PyQt5 --recursive-copy-metadata PyQt5 \
-	--paths=$(QT_PATH) "$(MAIN_SCRIPT)" $(HIDDEN_IMPORT) --debug all
+	WINEPREFIX=~/.wine wine $(WINE_PYTHONINSTALLER_PATH) $(PYINSTALLER_FLAGS_WIN) $(BUILD_ICON_WIN) $(PYINSTALLER_LIBS_WINDOWS) $(BUILD_WIN_NAME) --collect-all PyQt5 --collect-binaries PyQt5.Qt5 "$(MAIN_SCRIPT)" $(HIDDEN_IMPORT)
 
-# Move o executável compilado para a pasta bin/windows
+# Move compiled executable to bin/windows
 move_compiled_windows:
 	mkdir -p bin/windows
 	mv $(DIST_DIR) bin/windows/
 
-# Compila para Windows e move o executável
+# Compile for Windows and move executable
 build-windows: compile-windows move_compiled_windows
 
-# Compila para Linux
+# Compile for Linux
 compile-linux: clean install
 	$(VENV)/bin/pyinstaller $(PYINSTALLER_FLAGS) $(BUILD_NAME) $(MAIN_SCRIPT)
 
-# Limpa os ícones e builds do macOS
+# Clear icons and macOS builds
 clear-mac-build:
 	rm -rf $(ICON_MAC) $(ICON_SET)/* $(BIN_DIR_MAC)
 
-# Gera os ícones necessários para macOS
+# Generate necessary icons for macOS
 generate-mac-icons:
 	sips -z 16 16     $(ICON_PATH) --out $(ICON_SET)/icon_16x16.png
 	sips -z 32 32     $(ICON_PATH) --out $(ICON_SET)/icon_16x16@2x.png
@@ -106,19 +103,19 @@ generate-mac-icons:
 	cp $(ICON_PATH) $(ICON_SET)/icon_512x512@2x.png
 	iconutil -c icns $(ICON_SET)
 
-# Compila para macOS
+# Compile for macOS
 compile-mac: clean clear-mac-build install generate-mac-icons
 	$(VENV)/bin/pyinstaller $(PYINSTALLER_FLAGS) $(BUILD_ICON) $(PYINSTALLER_LIBS_MAC) $(BUILD_NAME) $(MAIN_SCRIPT)
 
-# Move o aplicativo compilado para a pasta bin/mac
+# Move compiled application to bin/mac
 move_compiled_mac:
 	mkdir -p bin/mac
 	mv dist/$(EXE_NAME).app bin/mac/
 
-# Compila para macOS, move o aplicativo e limpa os ícones
+# Compile for macOS, move application, and clear icons
 build-mac: compile-mac move_compiled_mac clear-mac-build
 
-# Limpa os arquivos gerados pelo PyInstaller e ambiente virtual
+# Clean up PyInstaller and virtual environment generated files
 clean:
 	rm -rf $(VENV) build __pycache__ *.spec Dockerfile
 	rm -rf $(DIST_DIR) $(BIN_DIR_WINDOWS) $(BIN_DIR_MAC)

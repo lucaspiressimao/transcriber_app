@@ -7,9 +7,9 @@ import os
 def transcribe_audio(file_path, api_key, send_to_openai=True):
     recognizer = sr.Recognizer()
 
-    # Verifica se precisa converter o arquivo M4A para WAV
+    # Check if the M4A file needs to be converted to WAV
     if file_path.endswith('.m4a'):
-        # Cria um arquivo temporário para o áudio em formato WAV
+        # Create a temporary file for the audio in WAV format
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_wav:
             audio = AudioSegment.from_file(file_path, format="m4a")
             audio.export(temp_wav.name, format="wav")
@@ -21,12 +21,12 @@ def transcribe_audio(file_path, api_key, send_to_openai=True):
         audio = recognizer.record(source)
 
     try:
-        audio_text = recognizer.recognize_google(audio, language="pt-BR")
+        audio_text = recognizer.recognize_google(audio, language="en-US")
 
         if send_to_openai:
             openai.api_key = api_key
 
-            # Abre o arquivo WAV temporário ou original para enviar para o OpenAI
+            # Open the temporary or original WAV file to send to OpenAI
             with open(audio_file_path, "rb") as audio_file:
                 response = openai.Audio.transcribe("whisper-1", audio_file)
                 return response['text']
@@ -34,11 +34,10 @@ def transcribe_audio(file_path, api_key, send_to_openai=True):
             return audio_text
 
     except sr.UnknownValueError:
-        return "Não foi possível entender o áudio"
+        return "Could not understand the audio"
     except sr.RequestError as e:
-        return f"Erro na solicitação; {e}"
+        return f"Request error; {e}"
     finally:
-        # Remove o arquivo temporário se foi criado
+        # Remove the temporary file if it was created
         if file_path.endswith('.m4a') and os.path.exists(audio_file_path):
             os.remove(audio_file_path)
-

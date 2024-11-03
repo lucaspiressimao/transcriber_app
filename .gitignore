@@ -1,1 +1,12 @@
 config.json
+venv/** 
+venv
+Digitador.spec
+build/** 
+bin/**
+**/.DS_Store
+img/icon.inconset/**
+img/incon.set/**
+img/icon.icns
+**/__pycache__
+Digitador.exe.spec
