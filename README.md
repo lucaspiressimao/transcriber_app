@@ -14,8 +14,9 @@ The Transcriber App is a Python application that transcribes audio to text using
 
 ```plaintext
 transcriber_app/
-├── transcriber.py         # Main script with transcription logic
-├── ui.py                  # Script for the graphical interface (UI)
+├── src/
+├──── transcriber.py         # Main script with transcription logic
+├──── ui.py                  # Script for the graphical interface (UI)
 ├── requirements.txt       # Project dependencies
 ├── Makefile               # Makefile for task automation
 └── README.md              # This README file with project information
